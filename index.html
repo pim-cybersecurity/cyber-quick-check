@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cybersecurity Quick Check</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700&family=Sarabun:wght@400;600&display=swap">
+<style>
+/* Layout: one narrow column, score bar stuck on top, ten question cards, result panel at the end. Single dark theme by choice, to match the seminar poster. */
+:root{
+  color-scheme: dark;
+  --bg:#0A1230;
+  --panel:#121D47;
+  --line:#2A3A78;
+  --ink:#F2F5FC;
+  --soft:#B4C0E4;
+  --red:#FF4D5A;
+  --yellow:#FFD21F;
+  --blue:#5AA2FF;
+  --good:#4FD89B;
+  --display:'Kanit','Tahoma',sans-serif;
+  --body:'Sarabun','Tahoma',sans-serif;
+}
+*{box-sizing:border-box;margin:0}
+html,body{background:var(--bg)}
+body{font-family:var(--body);color:var(--ink);font-size:18px;line-height:1.6;padding:0 16px 64px}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+header{padding:40px 0 4px;display:flex;flex-direction:column;gap:10px}
+.eyebrow{font-family:var(--display);font-weight:500;font-size:15px;letter-spacing:.08em;color:var(--yellow)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(30px,6vw,44px);line-height:1.2;text-wrap:balance}
+h1 span{color:var(--red)}
+.lead{color:var(--soft);max-width:60ch}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);padding:12px 0;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px}
+.track{flex:1;height:10px;border-radius:5px;background:var(--panel);overflow:hidden}
+.fill{height:100%;width:0;background:var(--yellow);transition:width .25s}
+.count{font-family:var(--display);font-weight:600;font-size:16px;font-variant-numeric:tabular-nums;min-width:5.5em;text-align:right}
+.q{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:14px}
+.q.done{border-color:var(--blue)}
+.qhead{display:flex;gap:14px;align-items:flex-start}
+.num{font-family:var(--display);font-weight:700;font-size:22px;color:var(--yellow);min-width:1.6em;font-variant-numeric:tabular-nums}
+.qtext{font-weight:600;font-size:19px;line-height:1.5}
+.hint{color:var(--soft);font-size:16px;font-weight:400;display:block;margin-top:4px}
+.opts{display:flex;gap:10px;flex-wrap:wrap}
+.opts label{flex:1 1 150px;position:relative}
+.opts input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.opts span{display:block;text-align:center;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);font-weight:600;font-size:16px;color:var(--soft)}
+.opts input:hover + span{border-color:var(--soft)}
+.opts input:focus-visible + span{outline:3px solid var(--blue);outline-offset:2px}
+.opts input:checked + span{color:var(--bg)}
+.opts input[value="1"]:checked + span{background:var(--good);border-color:var(--good)}
+.opts input[value="0.5"]:checked + span{background:var(--yellow);border-color:var(--yellow)}
+.opts input[value="0"]:checked + span{background:var(--red);border-color:var(--red)}
+#result{background:var(--panel);border:2px solid var(--line);border-radius:16px;padding:28px 22px;display:flex;flex-direction:column;gap:16px}
+#result h2{font-family:var(--display);font-weight:600;font-size:22px}
+.score{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.big{font-family:var(--display);font-weight:700;font-size:72px;line-height:1;font-variant-numeric:tabular-nums}
+.of{color:var(--soft);font-size:20px}
+.level{font-family:var(--display);font-weight:600;font-size:20px;padding:6px 16px;border-radius:999px;color:var(--bg);background:var(--soft)}
+.level.hi{background:var(--red)}.level.mid{background:var(--yellow)}.level.ok{background:var(--good)}
+.todo{display:flex;flex-direction:column;gap:10px;padding:0;list-style:none}
+.todo li{border-left:4px solid var(--red);padding:6px 0 6px 14px}
+.todo li.part{border-color:var(--yellow)}
+.todo b{display:block}
+.todo small{color:var(--soft);font-size:16px}
+.actions{display:flex;gap:12px;flex-wrap:wrap}
+button{font-family:var(--display);font-weight:600;font-size:17px;padding:11px 22px;border-radius:10px;border:1.5px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer}
+button.primary{background:var(--yellow);border-color:var(--yellow);color:var(--bg)}
+button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.note{color:var(--soft);font-size:15px}
+@media (prefers-reduced-motion:reduce){.fill{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">BUSINESS AWARENESS SEMINAR BY PIM</p>
+    <h1>Cybersecurity Quick Check: ธุรกิจคุณ<span>พร้อมรับมือ</span>แค่ไหน?</h1>
+    <p class="lead">ตอบ 10 ข้อตามสภาพจริงของธุรกิจคุณ ใช้เวลาประมาณ 3 นาที คำตอบอยู่บนเครื่องของคุณเท่านั้น ไม่มีการส่งหรือเก็บข้อมูล</p>
+  </header>
+
+  <div class="bar" aria-live="polite">
+    <div class="track"><div class="fill" id="fill"></div></div>
+    <div class="count" id="count">ตอบแล้ว 0/10</div>
+  </div>
+
+  <form id="form" class="wrap"></form>
+
+  <section id="result" aria-live="polite">
+    <h2>ผลประเมินของคุณ</h2>
+    <div class="score">
+      <span class="big" id="big">–</span><span class="of">จาก 10 คะแนน</span>
+      <span class="level" id="level">ตอบให้ครบ 10 ข้อ</span>
+    </div>
+    <p id="verdict">คะแนนจะคำนวณทันทีที่คุณตอบ ตอบครบแล้วจะเห็นระดับความพร้อมและสิ่งที่ควรทำก่อน</p>
+    <ul class="todo" id="todo"></ul>
+    <div class="actions">
+      <button type="button" class="primary" id="copy">คัดลอกผลประเมิน</button>
+      <button type="button" id="reset">เริ่มใหม่</button>
+    </div>
+    <p class="note">แบบประเมินนี้เป็นการสำรวจเบื้องต้นเพื่อสร้างความตระหนัก ไม่ใช่การตรวจประเมินความมั่นคงปลอดภัยอย่างเป็นทางการ</p>
+  </section>
+</div>
+
+<script>
+const Q = [
+  {t:"บัญชีสำคัญทุกบัญชีเปิดใช้ MFA แล้ว", h:"อีเมลบริษัท, VPN, ระบบบัญชี, ระบบ Cloud และบัญชีผู้ดูแลระบบ",
+   a:"เปิด MFA ให้บัญชีสำคัญ", d:"เริ่มจากอีเมลผู้บริหาร บัญชี Admin และ VPN ภายในสัปดาห์นี้"},
+  {t:"มี Backup อย่างน้อยหนึ่งชุดที่แยกจากเครือข่ายหลัก", h:"แบบ Offline หรือ Immutable ที่ Ransomware เข้าไปลบหรือเข้ารหัสไม่ได้",
+   a:"ทำ Backup แบบ 3-2-1", d:"สำเนา 3 ชุด บนสื่อ 2 ประเภท และ 1 ชุดแยกออกจากเครือข่าย"},
+  {t:"เคยทดสอบกู้คืนข้อมูลจาก Backup จริงในรอบ 6 เดือน", h:"และรู้ว่าต้องใช้เวลากี่ชั่วโมงกว่าระบบหลักจะกลับมา",
+   a:"ซ้อมกู้คืนข้อมูลจริง", d:"เลือกระบบสำคัญหนึ่งระบบ ลองกู้คืน แล้วจับเวลา"},
+  {t:"อุปกรณ์ที่ต่ออินเทอร์เน็ตได้รับการอัปเดต Patch สม่ำเสมอ", h:"Firewall, VPN, Server, เครื่องพนักงาน และไม่มีระบบที่หมดอายุการสนับสนุน",
+   a:"จัดรอบอัปเดต Patch", d:"กำหนดผู้รับผิดชอบและรอบอัปเดตรายเดือน เริ่มจาก Firewall และ VPN"},
+  {t:"พนักงานได้รับการอบรมเรื่อง Phishing อย่างน้อยปีละครั้ง", h:"รวมถึงมีช่องทางแจ้งเมื่อพบอีเมลหรือข้อความน่าสงสัย",
+   a:"อบรมและทดสอบ Phishing", d:"อบรมสั้น ๆ ทั้งบริษัท และตั้งช่องทางแจ้งอีเมลน่าสงสัยให้ชัดเจน"},
+  {t:"มีแผนรับมือเหตุการณ์ (Incident Response Plan) เป็นลายลักษณ์อักษร", h:"ระบุว่าใครตัดสินใจ ต้องโทรหาใคร และมีสำเนาที่เปิดได้แม้ระบบล่ม",
+   a:"เขียนแผนรับมือเหตุการณ์", d:"หนึ่งหน้ากระดาษก็พอ: ใครตัดสินใจ เบอร์ติดต่อ และขั้นตอน 24 ชั่วโมงแรก"},
+  {t:"รู้ว่าข้อมูลลูกค้าและข้อมูลสำคัญเก็บอยู่ที่ไหน ใครเข้าถึงได้", h:"มีทะเบียนข้อมูลและจำกัดสิทธิ์ตามหน้าที่",
+   a:"ทำทะเบียนข้อมูลสำคัญ", d:"ระบุว่าข้อมูลอะไรอยู่ที่ไหน และตัดสิทธิ์ผู้ที่ไม่จำเป็นต้องเข้าถึง"},
+  {t:"บัญชีของพนักงานที่ลาออกถูกปิดทันที และไม่ใช้บัญชี Admin ร่วมกัน", h:"แต่ละคนมีบัญชีของตัวเอง ตรวจสอบย้อนหลังได้",
+   a:"จัดระเบียบบัญชีผู้ใช้", d:"ตรวจรายชื่อบัญชีทั้งหมด ปิดบัญชีที่ไม่มีเจ้าของ เลิกใช้รหัสผ่านร่วม"},
+  {t:"มีข้อกำหนดด้านความปลอดภัยกับ Vendor ที่เข้าถึงระบบหรือข้อมูลของเรา", h:"เช่น ผู้ดูแลระบบภายนอก ผู้พัฒนาโปรแกรม ผู้ให้บริการ Cloud",
+   a:"กำหนดเงื่อนไขกับ Vendor", d:"ใส่ข้อกำหนดด้านความปลอดภัยและข้อตกลงประมวลผลข้อมูล (DPA) ในสัญญา"},
+  {t:"ผู้บริหารได้รับรายงานความเสี่ยงไซเบอร์สม่ำเสมอ และรู้หน้าที่ตาม PDPA", h:"รวมถึงการแจ้งเหตุข้อมูลรั่วไหลต่อ สคส. ภายใน 72 ชั่วโมง",
+   a:"ยกเรื่องไซเบอร์เป็นวาระผู้บริหาร", d:"ใส่ในวาระประชุมผู้บริหารทุกไตรมาส และกำหนดผู้รับผิดชอบแจ้งเหตุตาม PDPA"}
+];
+const OPTS = [["1","ทำแล้วครบถ้วน"],["0.5","ทำบางส่วน"],["0","ยังไม่ได้ทำ"]];
+const form = document.getElementById('form');
+form.innerHTML = Q.map((q,i)=>`
+  <fieldset class="q" id="q${i}" style="border-style:solid">
+    <legend class="qhead" style="float:left;width:100%;padding:0">
+      <span class="num">${String(i+1).padStart(2,'0')}</span>
+      <span class="qtext">${q.t}<span class="hint">${q.h}</span></span>
+    </legend>
+    <div class="opts" style="clear:both">
+      ${OPTS.map(([v,l])=>`<label><input type="radio" name="q${i}" id="q${i}-${v.replace('.','')}" value="${v}"><span>${l}</span></label>`).join('')}
+    </div>
+  </fieldset>`).join('');
+form.addEventListener('submit',e=>e.preventDefault());
+
+function scoreOf(vals){ return vals.reduce((s,v)=>s+(v===null?0:v),0); }
+function levelOf(score){
+  if(score>=8) return ["ok","พร้อมรับมือระดับดี","พื้นฐานของคุณแข็งแรง สิ่งที่เหลือคือการรักษาวินัยและซ้อมแผนอย่างสม่ำเสมอ"];
+  if(score>=4) return ["mid","ความเสี่ยงปานกลาง","คุณมีพื้นฐานบางส่วน แต่ยังมีช่องว่างที่ผู้โจมตีใช้ได้ ควรปิดข้อที่ยังไม่ได้ทำภายใน 90 วัน"];
+  return ["hi","ความเสี่ยงสูง","หากถูกโจมตีวันนี้ ธุรกิจมีโอกาสหยุดชะงักเป็นเวลานาน ควรเริ่มจาก MFA และ Backup ทันที"];
+}
+function read(){ return Q.map((_,i)=>{const c=form.querySelector(`input[name=q${i}]:checked`);return c?parseFloat(c.value):null;}); }
+function render(){
+  const vals = read(), n = vals.filter(v=>v!==null).length, s = scoreOf(vals);
+  document.getElementById('fill').style.width = (n*10)+'%';
+  document.getElementById('count').textContent = `ตอบแล้ว ${n}/10`;
+  Q.forEach((_,i)=>document.getElementById('q'+i).classList.toggle('done',vals[i]!==null));
+  const big=document.getElementById('big'), lv=document.getElementById('level'), vd=document.getElementById('verdict'), td=document.getElementById('todo');
+  if(n===0){ big.textContent='–'; lv.className='level'; lv.textContent='ตอบให้ครบ 10 ข้อ'; td.innerHTML=''; return; }
+  big.textContent = Number.isInteger(s)?s:s.toFixed(1);
+  if(n<10){ lv.className='level'; lv.textContent=`เหลืออีก ${10-n} ข้อ`; vd.textContent='คะแนนด้านบนนับจากข้อที่ตอบแล้ว ตอบให้ครบเพื่อดูระดับความพร้อม'; }
+  else { const [c,name,msg]=levelOf(s); lv.className='level '+c; lv.textContent=name; vd.textContent=msg; }
+  const gaps = Q.map((q,i)=>({q,v:vals[i]})).filter(x=>x.v!==null && x.v<1).sort((a,b)=>a.v-b.v);
+  td.innerHTML = gaps.length ? gaps.map(x=>`<li class="${x.v>0?'part':''}"><b>${x.q.a} <small>(${x.v>0?'ทำบางส่วน':'ยังไม่ได้ทำ'})</small></b><small>${x.q.d}</small></li>`).join('')
+    : (n===10?'<li class="part" style="border-color:var(--good)"><b>ไม่มีข้อที่ต้องเร่งแก้</b><small>ทบทวนแบบประเมินนี้อีกครั้งทุก 6 เดือน</small></li>':'');
+}
+form.addEventListener('change',render);
+document.getElementById('reset').addEventListener('click',()=>{form.reset();render();window.scrollTo({top:0});});
+document.getElementById('copy').addEventListener('click',async e=>{
+  const vals=read(), n=vals.filter(v=>v!==null).length, s=scoreOf(vals);
+  const lines=[`Cybersecurity Quick Check: ${s}/10 คะแนน (ตอบ ${n}/10 ข้อ)`];
+  if(n===10) lines.push('ระดับ: '+levelOf(s)[1]);
+  Q.forEach((q,i)=>{ if(vals[i]!==null && vals[i]<1) lines.push(`- ${q.a}: ${q.d}`); });
+  try{ await navigator.clipboard.writeText(lines.join('\n')); e.target.textContent='คัดลอกแล้ว'; }
+  catch(err){ e.target.textContent='คัดลอกไม่สำเร็จ'; }
+  setTimeout(()=>e.target.textContent='คัดลอกผลประเมิน',1800);
+});
+render();
+</script>
+</body>
+</html>
