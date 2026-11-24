@@ -94,7 +94,6 @@ button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
     <p id="verdict">คะแนนจะคำนวณทันทีที่คุณตอบ ตอบครบแล้วจะเห็นระดับความพร้อมและสิ่งที่ควรทำก่อน</p>
     <ul class="todo" id="todo"></ul>
     <div class="actions">
-      <button type="button" class="primary" id="copy">คัดลอกผลประเมิน</button>
       <button type="button" id="reset">เริ่มใหม่</button>
     </div>
     <p class="note">แบบประเมินนี้เป็นการสำรวจเบื้องต้นเพื่อสร้างความตระหนัก ไม่ใช่การตรวจประเมินความมั่นคงปลอดภัยอย่างเป็นทางการ</p>
@@ -161,15 +160,6 @@ function render(){
 }
 form.addEventListener('change',render);
 document.getElementById('reset').addEventListener('click',()=>{form.reset();render();window.scrollTo({top:0});});
-document.getElementById('copy').addEventListener('click',async e=>{
-  const vals=read(), n=vals.filter(v=>v!==null).length, s=scoreOf(vals);
-  const lines=[`Cybersecurity Quick Check: ${s}/10 คะแนน (ตอบ ${n}/10 ข้อ)`];
-  if(n===10) lines.push('ระดับ: '+levelOf(s)[1]);
-  Q.forEach((q,i)=>{ if(vals[i]!==null && vals[i]<1) lines.push(`- ${q.a}: ${q.d}`); });
-  try{ await navigator.clipboard.writeText(lines.join('\n')); e.target.textContent='คัดลอกแล้ว'; }
-  catch(err){ e.target.textContent='คัดลอกไม่สำเร็จ'; }
-  setTimeout(()=>e.target.textContent='คัดลอกผลประเมิน',1800);
-});
 render();
 </script>
 </body>
